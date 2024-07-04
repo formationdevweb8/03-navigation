@@ -28,10 +28,142 @@
   color: #61dafb;
 }
 
+.templateRow {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  text-align: center;
+}
+
+.columnOne {
+  display: flex;
+  width: 20%;
+  justify-content: center;
+}
+
+
+.templateColumn {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  margin-top: 50px;
+
+}
+
+.sidebar {
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+.linkSelected {
+  text-decoration: underline;
+  color: blue;
+}
+
+li {
+  margin-top: 20px;
+}
+
+li:hover {
+  text-decoration: underline;
+  color: blue;
+}
+
+/* * ----------- Form task ----------- */
+.titleTaskList {
+  margin-top: 20px;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.inputFormField {
+  color: black;
+  border: solid;
+  border-radius: 20px;
+  border-color: #CCCCCC;
+  padding: 5px;
+  min-width: 400px;
+}
+
+input,
+textarea {
+  margin-top: 14px;
+  margin-right: 10px;
+}
+
+
+.titleErrorHidden,
+.dateErrorHidden {
+  visibility: hidden;
+  width: 0px;
+  height: 0px;
+}
+
+.titleErrorVisible,
+.dateErrorVisible {
+  visibility: visible;
+  color: red;
+}
+
+.buttonValidate {
+  visibility: visible;
+  color: white;
+  background-color: #7A5CFA;
+  padding: 10px;
+  min-width: 250px;
+  min-height: 40px;
+  border-radius: 20px;
+
+}
+
+.buttonValidate:hover {
+  background-color: #9580f7;
+}
+
+.otherButtonValidate {
+  visibility: visible;
+  color: white;
+  background-color: #7A5CFA;
+  padding: 10px;
+  min-width: 120px;
+  min-height: 20px;
+  border-radius: 20px;
+
+}
+
+table,
+tr,
+td,
+thead,
+th {
+  padding: 10px;
+  border: solid;
+  border-color: #CCCCCC;
+}
+
+.centerTable {
+  display: flex;
+  justify-content: center;
+}
+
+.modalDeleteHidden {
+  visibility: hidden;
+}
+
+.modalDeleteVisible {
+  visibility: visible;
+}
+
+
+
+
+/* * ----------- end form task ----------- * */
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
