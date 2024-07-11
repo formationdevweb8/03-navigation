@@ -65,7 +65,9 @@ app.get('/gettask/:id', async (req, res) => {
 });
 
 app.put('/updatetaskdone', async (req, res) => {
+    //where _id=
     const myquery = { _id: req.body._id };
+    //set done=
     var newvalues = { $set: { done: req.body.done } };
 
     const task = await Task.updateOne(myquery, newvalues);

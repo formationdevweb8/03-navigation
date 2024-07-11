@@ -1,12 +1,18 @@
 // src/views/Tasks.tsx
 import React, { useState, useEffect } from 'react';
 import ITask from '../interfaces/ITask';
-const TaskFormObject: React.FC<any> = ({ addTaskInComponentTasks, isCreation, task }) => {
+
+type Props = {
+    addTaskInComponentTasks: (taskRow: ITask, isModified: boolean) => void;
+    isModified: boolean;
+    task: ITask
+}
+const TaskFormObject: React.FC<Props> = ({ addTaskInComponentTasks, isModified, task }) => {
     //gestion des erreurs
     const [titleVisible, setTitleVisible] = useState('titleErrorHidden');
     const [dateVisible, setDateVisible] = useState('dateErrorHidden');
 
-    const [taskForm, setTaskForm] = useState<ITask>({ date: '', title: '' });
+    const [taskForm, setTaskForm] = useState<ITask>({ date: '', title: '', priority: 'oui' });
 
     const [showButtonCreateOrModify, setShowButtonCreateOrModify] = useState('');
     //enum pour les type des champs
@@ -15,18 +21,27 @@ const TaskFormObject: React.FC<any> = ({ addTaskInComponentTasks, isCreation, ta
         TextAreaField,
         DateField,
         CheckBoxField,
+        RadioButtonField
     }
 
     useEffect(() => {
         //state pour les champs
-        if (isCreation) {
-            setTaskForm({ title: '', description: '', date: '', done: false });
+        if (!isModified) {
+            setTaskForm({ title: '', description: '', date: '', done: false, priority: 'oui' });
             setShowButtonCreateOrModify("Créer")
         } else {
             setTaskForm(task);
             setShowButtonCreateOrModify("Modifier")
         }
-    }, []);
+    }, [isModified]);
+
+    useEffect(() => {
+        //state pour les champs
+        if (isModified) {
+            setTaskForm(task);
+            //setShowButtonCreateOrModify("Modifier")
+        }
+    }, [task._id]);
 
     function handleChange<T>(value: T, typeField: number): void {
         if (typeField === FormFields.StringField) {
@@ -41,6 +56,9 @@ const TaskFormObject: React.FC<any> = ({ addTaskInComponentTasks, isCreation, ta
         }
         if (typeField === FormFields.CheckBoxField) {
             setTaskForm({ ...taskForm, done: value as boolean });
+        }
+        if (typeField === FormFields.RadioButtonField) {
+            setTaskForm({ ...taskForm, priority: value as string });
         }
     }
 
@@ -65,9 +83,7 @@ const TaskFormObject: React.FC<any> = ({ addTaskInComponentTasks, isCreation, ta
             fieldsValidated = false;
         }
         if (fieldsValidated) {
-
-            addTaskInComponentTasks(taskForm);
-
+            addTaskInComponentTasks(taskForm, isModified);
         }
 
 
@@ -100,6 +116,28 @@ const TaskFormObject: React.FC<any> = ({ addTaskInComponentTasks, isCreation, ta
                         Veuillez saisir le champ 'date'
                     </div>
                 </div>
+                <div><h2>Priorité</h2></div>
+                <div className="priorityRow">
+                    <div>
+                        <input type="radio" id="oui" name="priority" value="oui" checked={taskForm.priority === "oui"}
+                            onClick={(event) => handleChange((event.target as HTMLInputElement).value, FormFields.RadioButtonField)} />
+                        <label htmlFor="huey">Oui</label>
+                    </div>
+
+                    <div>
+                        <input type="radio" id="non" name="priority" value="non" checked={taskForm.priority === "non"}
+                            onClick={(event) => handleChange((event.target as HTMLInputElement).value, FormFields.RadioButtonField)} />
+                        <label htmlFor="priority">Non</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="peutetre" name="priority" value="peutetre" checked={taskForm.priority === "peutetre"}
+                            onClick={(event) => handleChange((event.target as HTMLInputElement).value, FormFields.RadioButtonField)} />
+                        <label htmlFor="priority">Peut être</label>
+                    </div>
+
+
+
+                </div>
                 <div>
                     <input type="checkbox" id="done" checked={taskForm.done} onChange={(event) => handleChange(event.target.checked, FormFields.CheckBoxField)}
                         name="done"></input>
@@ -110,9 +148,11 @@ const TaskFormObject: React.FC<any> = ({ addTaskInComponentTasks, isCreation, ta
                 </div>
 
 
-            </form>
 
-        </div>
+
+            </form >
+
+        </div >
     );
 }
 

@@ -17,13 +17,19 @@ const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const cors_1 = __importDefault(require("cors"));
 const body_parser_1 = __importDefault(require("body-parser"));
+//importation de dotenv pour gèrer les .env pour le backend
+const dotenv_1 = __importDefault(require("dotenv"));
+const path_1 = __importDefault(require("path"));
 const app = (0, express_1.default)();
-const PORT = 5000;
+//on configure le fichier .env pour le serveur.js dans le répertoire src/server/.env
+dotenv_1.default.config({ path: path_1.default.resolve(__dirname, '.env') });
 // Middleware
 app.use((0, cors_1.default)());
 app.use(body_parser_1.default.json());
+//port 
+const PORT = process.env.PORT;
 // MongoDB connection
-mongoose_1.default.connect('mongodb://localhost:27017/tasksdb', {
+mongoose_1.default.connect(process.env.MONGO_DB_SERVER, {
 //useNewUrlParser: true,
 //useUnifiedTopology: true,
 }).then(() => console.log('MongoDB connected'))
@@ -54,4 +60,25 @@ app.delete('/tasks/:id', (req, res) => __awaiter(void 0, void 0, void 0, functio
     yield Task.findByIdAndDelete(req.params.id);
     res.json({ message: 'Task deleted' });
 }));
+app.get('/gettask/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    yield Task.findById(req.params.id);
+    res.json({ message: 'Get task' });
+}));
+app.put('/updatetaskdone', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    //where _id=
+    const myquery = { _id: req.body._id };
+    //set done=
+    var newvalues = { $set: { done: req.body.done } };
+    const task = yield Task.updateOne(myquery, newvalues);
+    res.json(task);
+}));
+/*
+ var myquery = { address: "Valley 345" };
+  var newvalues = { $set: {name: "Mickey", address: "Canyon 123" } };
+  dbo.collection("customers").updateOne(myquery, newvalues, function(err, res) {
+    if (err) throw err;
+    console.log("1 document updated");
+    db.close();
+  });
+*/
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

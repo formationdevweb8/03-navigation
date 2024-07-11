@@ -1,47 +1,42 @@
 // src/views/Tasks.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import TaskForm from '../components/TaskFormObject';
-import { fetchTasks, addTask, deleteTask, updateTaskDone } from '../services/fetchTasks';
+import { fetchTasks, addTask, deleteTask, updateTaskDone, editTask, } from '../services/fetchTasks';
 import ITask from '../interfaces/ITask';
 import TaskRow from '../components/TaskRow';
-import { version } from 'os';
 
 const Tasks: React.FC = () => {
     const [listTasks, setListTasks] = useState<ITask[]>([]);
 
-    const [isCreation, setIsCreation] = useState(true);
-    const [taskToPass, setTaskToPass] = useState();
+    const [isModified, setIsModified] = useState(false);
+    const [taskToPass, setTaskToPass] = useState<ITask>({ title: '', date: '' });
 
     const [modalDeleteStyle, setModalDeleteStyle] = useState('modalDeleteHidden');
     const [idTaskToDelete, setIdTaskToDelete] = useState('');
-
-    //modalDeleteVisible
-
-    /*useEffect(() => {
-        fetch('http://localhost:5001/tasks')
-            .then((res) => {
-                return res.json();
-            })
-            .then((data) => {
-                console.log(data);
-                setListTasks(data);
-            });
-    }, []);*/
 
     useEffect(() => {
         getAllTasks()
     }, []);
 
-    const getAllTasks = async () => {
+
+    const getAllTasks = useCallback(async () => {
+        setListTasks([]);
         let list = await fetchTasks();
-        setListTasks(list);
-    };
+        setListTasks([...list]);
+    }, []);
 
-
-    const addTaskInComponentTasks = async (taskToAdd: ITask) => {
-        //ajouter une tâche
-        let task = await addTask(taskToAdd);
-        console.log(task);
+    const addTaskInComponentTasks = async (taskToAdd: ITask, isModifiedValue: boolean) => {
+        if (isModifiedValue) {
+            //modifier une tâche
+            let task = await editTask(taskToAdd);
+            console.log(task);
+            setIsModified(false);
+        } else {
+            //ajouter une tâche
+            let task = await addTask(taskToAdd);
+            console.log(task);
+            setIsModified(false);
+        }
         //afficher la liste 
         await getAllTasks();
     };
@@ -80,13 +75,18 @@ const Tasks: React.FC = () => {
         await getAllTasks();
     }
 
+    const updateTaskRow = (isModified: boolean, taskRow: ITask) => {
+        setIsModified(isModified);
+        setTaskToPass(taskRow);
+    };
+
 
     //TaskRow passer un obkket Task complet 
     //<div key={task._id}>{task.title}+{task._id}</div>
     return (
         <div className="">
-            <div><TaskForm task={taskToPass} isCreation={isCreation}
-                addTaskInComponentTasks={(taskToAdd: ITask) => addTaskInComponentTasks(taskToAdd)} /></div>
+            <div><TaskForm task={taskToPass} isModified={isModified}
+                addTaskInComponentTasks={(taskToAdd: ITask, isModified: boolean) => addTaskInComponentTasks(taskToAdd, isModified)} /></div>
             <div id="supprimerflorian" className={modalDeleteStyle}>
                 <div id="popup">
                     <div id="title">Etes-vous sûr de vouloir supprimer la tâche ?</div>
@@ -112,12 +112,14 @@ const Tasks: React.FC = () => {
                             <th scope="col">Titre</th>
                             <th scope="col">Description</th>
                             <th scope="col">Date</th>
+                            <th scope="col">Priority</th>
                             <th scope="col">Modifier</th>
                             <th scope="col">Supprimer</th>
                         </tr>
                     </thead>
                     {listTasks.map((taskRow: ITask) => {
                         return <TaskRow taskRow={taskRow}
+                            updateTaskRow={(isModified: boolean, taskRow: ITask) => updateTaskRow(isModified, taskRow)}
                             deleteTaskInComponentTasks={(id: string) => deleteTaskInComponentTasks(id)}
                             updateTaskCheckbox={(taskRow: ITask) => updateTaskCheckbox(taskRow)}
                             key={taskRow._id} />

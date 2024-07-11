@@ -13,10 +13,11 @@ const TaskRow: React.FC<any> = (props: Props) => {
     const [taskRow, setTaskRow] = useState(props.taskRow);
 
     const updateTaskCheckbox = async (doneValue: boolean) => {
-        setTaskRow({ ...taskRow, done: doneValue })
+        const taskRowForDone = { ...taskRow, done: doneValue }
+        setTaskRow(taskRowForDone);
         console.log("change done value of task");
-        taskRow.done = doneValue;
-        props.updateTaskCheckbox(taskRow);
+        //taskRow.done = doneValue;
+        props.updateTaskCheckbox(taskRowForDone);
     }
 
 
@@ -25,7 +26,7 @@ const TaskRow: React.FC<any> = (props: Props) => {
     }
 
     const updateTaskRow = async (value: string) => {
-        //aeguments
+        //arguments
         //isModified:boolean 
         //task:Itask
         props.updateTaskRow(true, taskRow);
@@ -45,6 +46,7 @@ const TaskRow: React.FC<any> = (props: Props) => {
                 {taskRow.description}
             </td>
             <td>{taskRow.date}</td>
+            <td>{taskRow.priority}</td>
             <td><button className="otherButtonValidate" onClick={() => updateTaskRow('updateRow')}>Modifier</button></td>
             <td><button className="otherButtonValidate"
                 onClick={() => deleteTaskInComponent('delete')}>Supprimer</button></td>

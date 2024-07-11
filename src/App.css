@@ -154,6 +154,15 @@ th {
   visibility: visible;
 }
 
+.priorityRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.priorityRow div {
+  padding: 5px
+}
 
 
 
