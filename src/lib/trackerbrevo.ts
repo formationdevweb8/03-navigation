@@ -32,7 +32,7 @@ export function initBrevoTracker() {
     n.id = "sendinblue-js";
     n.async = true;
     n.src = "https://sibautomation.com/sa.js?key=" + window.sib.client_key;
-    iscript.parentNode?.insertBefore(n, i);
+    iscript.parentNode?.insertBefore(n, iscript);
     window.sendinblue.page();
 }
 
